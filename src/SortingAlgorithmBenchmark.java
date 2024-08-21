@@ -17,10 +17,10 @@ public class SortingAlgorithmBenchmark {
         // Main Class, read files, call methods, and output results (if necessary)
     }
 
-    private static void selectionSort(Object[] objectToBeRenamed) {
+    private static void selectionSort(ObjectToBeRenamed[] objectArrayToBeRenamed) {
     }
-    private static void insertionSort(Object[] objectToBeRenamed) {
+    private static void insertionSort(ObjectToBeRenamed[] objectArrayToBeRenamed) {
     }
-    private static void bubbleSort(Object[] objectToBeRenamed) {
+    private static void bubbleSort(ObjectToBeRenamed[] objectArrayToBeRenamed) {
     }
 }
