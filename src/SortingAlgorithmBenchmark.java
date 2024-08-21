@@ -11,7 +11,16 @@
  * @see SortingAlgorithmCounter
  */
 public class SortingAlgorithmBenchmark {
-    // should have an object of SortingAlgorithmCounter
-    // this is where to read csv/txt files and place it in an array type of <Object> (to be renamed).
-    // Main Class, read files, call methods, and output results (if necessary)
+    public static void main(String[] args) {
+        // should have an object of SortingAlgorithmCounter
+        // this is where to read csv/txt files and place it in an array type of <Object> (to be renamed).
+        // Main Class, read files, call methods, and output results (if necessary)
+    }
+
+    private static void selectionSort(ObjectToBeRenamed[] objectArrayToBeRenamed) {
+    }
+    private static void insertionSort(ObjectToBeRenamed[] objectArrayToBeRenamed) {
+    }
+    private static void bubbleSort(ObjectToBeRenamed[] objectArrayToBeRenamed) {
+    }
 }
