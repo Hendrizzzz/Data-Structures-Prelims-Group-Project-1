@@ -1,7 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -22,13 +20,12 @@ public class SortingAlgorithmBenchmark {
         // this is where to read csv/txt files and place it in an array type of <Object> (to be renamed).
         // Main Class, read files, call methods, and output results (if necessary)
 
-        final int SIZE = 10000; // Set the fixed size of the array
+        final int SIZE = 1000000; // Set the fixed size of the array
         MedicalRecords[] medicalRecordsArray = new MedicalRecords[SIZE];
 
-        int recordsCount = readMedicalRecordsFromCSV("src/datasets/medical_records_dataset.csv", medicalRecordsArray);
+        int recordsCount = readMedicalRecordsFromCSV("src/datasets/medical_records_dataset_random.csv", medicalRecordsArray);
 
-        // di ko alam why it's beginning at 4887
-        // baka there's a limit to the console of intellij tapos everything else is getting overwritten
+        // Adjust your Console Cycle Buffer Size in IntelliJ to see the entirety of the console
         for (int i = 0; i < recordsCount; i++) {
             System.out.println("("+ (i + 1) + ") " + medicalRecordsArray[i]);
         }
