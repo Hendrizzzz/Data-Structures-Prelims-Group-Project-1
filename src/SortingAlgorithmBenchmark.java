@@ -21,9 +21,10 @@ public class SortingAlgorithmBenchmark {
         // Main Class, read files, call methods, and output results (if necessary)
 
         final int SIZE = 1000000; // Set the fixed size of the array
+        final String DATASET = "src/datasets/medical_records_dataset_random.csv"; // Set the directory of the data set
         MedicalRecords[] medicalRecordsArray = new MedicalRecords[SIZE];
 
-        int recordsCount = readMedicalRecordsFromCSV("src/datasets/medical_records_dataset_random.csv", medicalRecordsArray);
+        int recordsCount = readMedicalRecordsFromCSV(DATASET, medicalRecordsArray);
 
         // Adjust your Console Cycle Buffer Size in IntelliJ to see the entirety of the console
         for (int i = 0; i < recordsCount; i++) {
