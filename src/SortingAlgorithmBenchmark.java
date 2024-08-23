@@ -81,7 +81,28 @@ public class SortingAlgorithmBenchmark {
 
     private static void selectionSort(MedicalRecords[] medicalRecordsArray) {
     }
-    private static void insertionSort(MedicalRecords[] medicalRecordsArray) {
+    /**
+     * Sorts the dataset via Insertion method
+     * @author Cardenas
+     * @param dataSize specific size of the data set (i.e., 10,000/50,000/200,000 etc.)
+     * @param medicalRecordsArray Object used to store and manipulate the data set
+     * Algorithm:
+     * 1. Instantiate a new variable for the object to be sorted.
+     * 2. Through a nested loop, make the outer loop such that it iterates from the 2nd element to the last.
+     * 3. Within the inner loop, compare the element from the left to its adjacent right.
+     * 4. If said condition was satisfied, left element is moved to the right.
+     * 5. The variable used in process 1 will then be assigned with the value with its sorted placement.
+     * */
+    private static void insertionSort(MedicalRecords[] medicalRecordsArray, int dataSize) {
+        for (int i = 1; i < dataSize; ++i) {
+            MedicalRecords another = medicalRecordsArray[i];
+            int j = i - 1;
+            while (j >= 0 && medicalRecordsArray[j].compareTo(another) > 0) {
+                medicalRecordsArray[j + 1] = medicalRecordsArray[j];
+                j = j - 1;
+            }
+            medicalRecordsArray[j + 1] = another;
+        }
     }
     private static void bubbleSort(MedicalRecords[] medicalRecordsArray) {
     }
