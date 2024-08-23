@@ -36,7 +36,7 @@ public class MedicalRecords implements Comparable<MedicalRecords> {
     /**
      * Setter Methods
      * @author Franz
-     * */
+     */
     // Input Methods
 
     /**
