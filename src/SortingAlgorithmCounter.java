@@ -86,7 +86,7 @@ public class SortingAlgorithmCounter implements SortProfiler {
                     statementCount++;
                 }
             }
-            
+
             MedicalRecords temp = medicalRecords[i];
             medicalRecords[i] = medicalRecords[minIndex];
             medicalRecords[minIndex] = temp;

@@ -6,7 +6,7 @@ public class MedicalRecords implements Comparable<MedicalRecords> {
     String firstName;
     String patientID;
     String gender;
-    int contactInfo;
+    long contactInfo;
     String medications;
     String reasonForVisit;
     String physician;
@@ -15,7 +15,7 @@ public class MedicalRecords implements Comparable<MedicalRecords> {
      * Constructor
      * @author Hyowon
      * */
-    public MedicalRecords(String lastName, String firstName, String patientID, String gender, int contactInfo,
+    public MedicalRecords(String lastName, String firstName, String patientID, String gender, long contactInfo,
                           String medications, String reasonForVisit, String physician) {
         this.lastName = lastName;
         this.firstName = firstName;
