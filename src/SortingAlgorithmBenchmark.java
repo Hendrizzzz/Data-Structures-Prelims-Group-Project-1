@@ -40,9 +40,17 @@ public class SortingAlgorithmBenchmark {
         int count = 0;
 
         try (Scanner scanner = new Scanner(new File(fileName))) {
-            // Skip the header line cause the header line are just titles and are not part of the dataset
+
+            // Check if file exists. If file does not exist, remind user to pull from Git LFS
             if (scanner.hasNextLine()) {
-                scanner.nextLine();
+                String firstLine = scanner.nextLine();
+
+                if (firstLine.toLowerCase().contains("version")) { // Detects file is not pulled from Git LFS
+                    System.out.println("File does not exist.\nFile needs to be pulled from Git LFS.");
+                    return -1;
+                }
+            } else {
+                System.out.println("The file is empty.");
             }
 
             while (scanner.hasNextLine() && count < medicalRecordsArray.length) {
