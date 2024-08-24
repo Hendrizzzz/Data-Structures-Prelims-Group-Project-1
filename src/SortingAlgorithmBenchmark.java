@@ -48,8 +48,6 @@ public class SortingAlgorithmBenchmark {
                 if (firstLine.toLowerCase().contains("version")) { // Detects file is not pulled from Git LFS
                     System.out.println("File does not exist.\nFile needs to be pulled from Git LFS.");
                     return -1;
-                } else { // Skip header line and proceed with sorting
-                    scanner.nextLine();
                 }
             } else {
                 System.out.println("The file is empty.");
