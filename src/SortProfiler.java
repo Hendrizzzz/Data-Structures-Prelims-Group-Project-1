@@ -4,7 +4,7 @@
 public interface SortProfiler {
     // "objects" will be replaced by the actual object to use
     // "Object" will be replaced
-    int getBubbleSortStatementCount(Object[] objects);
-    int getInsertionSortStatementCount(Object[] objects);
-    int getSelectionSortStatementCount(Object[] objects);
+    int getBubbleSortStatementCount(MedicalRecords[] objects);
+    int getInsertionSortStatementCount(MedicalRecords[] objects);
+    int getSelectionSortStatementCount(MedicalRecords[] objects);
 }
