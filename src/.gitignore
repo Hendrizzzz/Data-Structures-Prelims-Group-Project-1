@@ -9,3 +9,7 @@
 # Maven
 .target/
 pom.xml.tag
+
+*.xml
+out/
+
