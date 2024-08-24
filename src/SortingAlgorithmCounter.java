@@ -1,63 +1,98 @@
 /**
- * The {@code SortingAlgorithmCounter} class implements the {@code SortProfiler} interface
+ * Implements {@code SortProfiler} to count statements for sorting algorithms.
+ *
+ * @author Jim Hendrix Bag-eo
+ *
  * @see SortProfiler
  */
 public class SortingAlgorithmCounter implements SortProfiler {
+
+
+    /**
+     * Counts statements in bubble sort algorithm while sorting.
+     *
+     * @param medicalRecords Array of {@code MedicalRecords} to sort.
+     * @return Number of statements executed.
+     */
     @Override
-    public int getBubbleSortStatementCount(MedicalRecords[] medicalRecordsArray) {
-        int statementCount = 0;  // Initialize statement count
+    public int getBubbleSortStatementCount(MedicalRecords[] medicalRecords) {
+        int statementCount = 0;
 
-        for (int i = 0; i < medicalRecordsArray.length - 1; i++, statementCount++) {
+        for (int i = 0; i < medicalRecords.length - 1; i++, statementCount++) {
             boolean swapped = false;
-            statementCount++; // counter of the above statement
 
-            for (int j = 0; j < medicalRecordsArray.length - i - 1; j++, statementCount++) { // the
-
+            for (int j = 0; j < medicalRecords.length - i - 1; j++, statementCount++) { // the
                 statementCount++;
-                if (medicalRecordsArray[j].compareTo(medicalRecordsArray[j + 1]) > 0) {
-                    // Swap medicalRecordsArray[j] and medicalRecordsArray[j + 1]
-                    MedicalRecords temp = medicalRecordsArray[j];
-                    medicalRecordsArray[j] = medicalRecordsArray[j + 1];
-                    medicalRecordsArray[j + 1] = temp;
+                if (medicalRecords[j].compareTo(medicalRecords[j + 1]) > 0) {
+                    MedicalRecords temp = medicalRecords[j];
+                    medicalRecords[j] = medicalRecords[j + 1];
+                    medicalRecords[j + 1] = temp;
                     swapped = true;
-                    statementCount += 4;
+                    statementCount += 4; // all statements under the if-condition
                 }
             }
 
-            // If no two elements were swapped by inner loop, then break
-            statementCount++;
-            if (!swapped) {
+            statementCount += 2; // first statement under the outer for loop and the if condition below
+            if (!swapped) { // If inner loop swapped no two elements, then break
                 statementCount++;
                 break;
             }
         }
-
-        statementCount += 2; // 1 from the slack of outer for loop, 1 from the slack of for loop, and 1 from the slack if the 'if condition' = 3
+        statementCount += 2; // Include slack from the outer and inner loops
         return statementCount;
     }
 
 
+    /**
+     * Counts statements in insertion sort algorithm while sorting.
+     *
+     * @param medicalRecords Array of {@code MedicalRecords} to sort.
+     * @return Number of statements executed.
+     */
     @Override
-    public int getInsertionSortStatementCount(MedicalRecords[] medicalRecordsArray) {
-        int count = 1;
-        for (int i = 1; i < medicalRecordsArray.length; ++i, count++) { // increment the element count and the count of the statements
-            MedicalRecords another = medicalRecordsArray[i];
+    public int getInsertionSortStatementCount(MedicalRecords[] medicalRecords) {
+        int statementCount = 0;
+        for (int i = 1; i < medicalRecords.length; i++, statementCount++) { // increment the element statementCount and the statementCount of the statements
+            MedicalRecords another = medicalRecords[i];
             int j = i - 1;
-            count += 2;
-            while (j >= 0 && medicalRecordsArray[j].compareTo(another) > 0) {
-                medicalRecordsArray[j + 1] = medicalRecordsArray[j];
+            while (j >= 0 && medicalRecords[j].compareTo(another) > 0) {
+                medicalRecords[j + 1] = medicalRecords[j];
                 j = j - 1;
-                count += 3;
+                statementCount += 2;
             }
-            medicalRecordsArray[j + 1] = another;
-            count += 1;
+            medicalRecords[j + 1] = another;
+            statementCount += 4;
         }
-        count += 1; // the missing 1 from the while loop
-        return count;
+        statementCount += 2; // the missing 1 from for loop and while loop
+        return statementCount;
     }
 
+
+    /**
+     * Counts statements in selection sort algorithm while sorting.
+     *
+     * @param medicalRecords Array of {@code MedicalRecords} to sort.
+     * @return Number of statements executed.
+     */
     @Override
-    public int getSelectionSortStatementCount(MedicalRecords[] objects) {
-        return -1;
+    public int getSelectionSortStatementCount(MedicalRecords[] medicalRecords) {
+        int statementCount = 0;
+        for (int i = 0; i < medicalRecords.length - 1; i++, statementCount++){
+            int minIndex = i;
+            for (int j = i + 1; j < medicalRecords.length; j++, statementCount++){
+                statementCount++;
+                if (medicalRecords[minIndex].compareTo(medicalRecords[j]) > 0){
+                    minIndex = j;
+                    statementCount++;
+                }
+            }
+            
+            MedicalRecords temp = medicalRecords[i];
+            medicalRecords[i] = medicalRecords[minIndex];
+            medicalRecords[minIndex] = temp;
+            statementCount += 4;
+        }
+        statementCount += 2; // Account for the final loop statements
+        return statementCount;
     }
 }
