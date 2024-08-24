@@ -35,12 +35,23 @@ The project includes five sets of data, each in three variants:
 
 **Note**: To use these datasets, ensure Git LFS is installed. Fetch the large files using `git lfs pull`.
 
+## Git LFS Usage
+
+Git Large File Storage (Git LFS) is a Git extension designed to handle large files in a repository more efficiently. Standard Git is not well-suited for versioning large files, as it stores every version of every file in your repository's history. This can quickly bloat the size of your repository, making it difficult to manage and share.
+
+In this project, the dataset files can be very large, particularly when working with up to 1,000,000 records. These files can exceed the standard storage limits of Git, especially on platforms like GitLab, **which has a default file size limit of 100MB per file.** To accommodate these large files without exceeding storage limits, we use Git LFS.
+
 ## Usage
 
 To work with these datasets, follow these steps:
 
 1. **Install Git LFS**: Ensure Git LFS is installed and configured on your system.
 2. **Fetch LFS files**: Run `git lfs pull` to download the LFS-tracked files if you encounter errors related to missing files.
+
+Otherwise, if Git LFS is not available, follow these steps:
+
+1. **Download Data Set Manually**: Download the three required data set inside the src/dataset/ directory. This grabs the actual file outside the Git LFS Server.
+2. **Place them inside the repository**: Place them inside your cloned repository to the same src/dataset/ directory.
 
 ## Algorithm Implementations
 
@@ -52,7 +63,6 @@ The repository includes Java implementations for the following sorting algorithm
 
 Each implementation is modified to count and report the number of statements executed during sorting.
 
-
 ## Developers
 
 - **ANGELO, Franz Carlo** 
@@ -62,4 +72,3 @@ Each implementation is modified to count and report the number of statements exe
 - **CARDENAS, Aaron** 
 - **MATULAY, Audrey** 
 - **SAIPEN, Xylon** 
-
