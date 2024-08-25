@@ -31,7 +31,37 @@ public class MedicalRecords implements Comparable<MedicalRecords> {
      * Getter Methods
      * @author Audrey
      * */
-    // Input Methods
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getPatientID() {
+        return patientID;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public long getContactInfo() {
+        return contactInfo;
+    }
+
+    public String getMedications() {
+        return medications;
+    }
+
+    public String getReasonForVisit() {
+        return reasonForVisit;
+    }
+
+    public String getPhysician() {
+        return physician;
+    }
 
     /**
      * Setter Methods

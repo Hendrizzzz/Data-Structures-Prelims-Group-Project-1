@@ -87,8 +87,36 @@ public class SortingAlgorithmBenchmark {
         return count;
     }
 
+    /**
+     * Sorts the dataset via Selection Sort Method
+     * @author Matulay
+     * Algorithm:
+     * 1. Start with the first element (i) as the current position of the sorted portion.
+     * 2.  Find the smallest element in the unsorted portion (from i+1 to n).
+     * 3. Swap the found minimum element with the element at position i.
+     * 4. Move the boundary of the sorted portion one step forward by increasing i.
+     * 5. Repeat the above steps until the entire array is sorted.
+     */
     private static void selectionSort(MedicalRecords[] medicalRecordsArray) {
+         int n = medicalRecordsArray.length;
+
+        for (int i = 0; i < n - 1; i++) {
+            int minIndex = i;
+
+            for (int j = i + 1; j < n; j++) {
+                if (medicalRecordsArray[j].compareTo(medicalRecordsArray[minIndex]) < 0) {
+                    minIndex = j;
+                }
+            }
+
+            if (minIndex != i) {
+                MedicalRecords temp = medicalRecordsArray[i];
+                medicalRecordsArray[i] = medicalRecordsArray[minIndex];
+                medicalRecordsArray[minIndex] = temp;
+            }
+        }
     }
+
     /**
      * Sorts the dataset via Insertion method
      * @author Cardenas
