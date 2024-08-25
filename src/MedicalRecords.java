@@ -67,6 +67,38 @@ public class MedicalRecords implements Comparable<MedicalRecords> {
      * Setter Methods
      * @author Franz
      * */
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setPatientID(String patientID) {
+        this.patientID = patientID;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setContactInfo(long contactInfo) {
+        this.contactInfo = contactInfo;
+    }
+
+    public void setMedications(String medications) {
+        this.medications = medications;
+    }
+
+    public void setReasonForVisit(String reasonForVisit) {
+        this.reasonForVisit = reasonForVisit;
+    }
+
+    public void setPhysician(String physician) {
+        this.physician = physician;
+    }
     // Input Methods
 
     /**

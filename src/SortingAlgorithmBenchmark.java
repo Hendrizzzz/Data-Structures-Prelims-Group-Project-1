@@ -140,6 +140,35 @@ public class SortingAlgorithmBenchmark {
             medicalRecordsArray[j + 1] = another;
         }
     }
-    private static void bubbleSort(MedicalRecords[] medicalRecordsArray) {
+    /**
+     * Sorts the dataset via Bubble Sort method
+     * @author Angelo
+     * @param medicalRecordsArray Object used to store and manipulate the data set
+     * Algorithm:
+     * 1. Iterate through the array multiple times, comparing adjacent elements.
+     * 2. If the left element is greater than the right element, swap them.
+     * 3. Repeat until no swaps are needed, meaning the array is sorted.
+     */
+    private static void  bubbleSort(MedicalRecords[] medicalRecordsArray) {
+        int n = medicalRecordsArray.length;
+        boolean swapped;
+
+        for(int i=0; i < n - 1; i++) {
+            swapped = false;
+
+            for (int j = 0; j < n - i - 1; j++) {
+                if (medicalRecordsArray[j].compareTo(medicalRecordsArray[j + 1]) > 0) {
+                    MedicalRecords temp = medicalRecordsArray[j];
+                    medicalRecordsArray[j] = medicalRecordsArray[j + 1];
+                    medicalRecordsArray[j + 1] = temp;
+
+                    swapped = true;
+                }
+            }
+
+            if (!swapped) {
+                break;
+            }
+        }
     }
 }
