@@ -220,7 +220,6 @@ public class MainClassForReference2 implements Runnable{
             System.out.println("All sorting tasks are completed.");
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            // Handle exceptions if needed
         }
     }
 
