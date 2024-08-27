@@ -1,0 +1,6 @@
+lastName,firstName,patientID,gender,contactInfo,medications,reasonForVisit,physician
+West,Jill,EUCBQYGPR,Other,+639122143061,"Lisinopril, Ibuprofen, Aspirin",Cold/Flu,Dr. Brown
+Smith,Paige,86HO0RIYA,Male,+639594258961,Metformin,Checkup,Dr. Jones
+Reyes,Patrick,DVWSX9Y43,Female,+639676414548,"Ibuprofen, Atorvastatin, Metformin",Cold/Flu,Dr. Brown
+Collier,Luis,HKE67FEKT,Male,+639275339979,"Atorvastatin, Metformin",Chronic Pain,Dr. Jones
+Briggs,Lynn,Y4861YYS2,Male,+639876472657,Aspirin,Chronic Pain,Dr. Jones

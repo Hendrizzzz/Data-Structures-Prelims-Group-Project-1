@@ -21,7 +21,7 @@ public class SortingAlgorithmBenchmark {
         // Main Class, read files, call methods, and output results (if necessary)
 
         final int SIZE = 1000000; // Set the fixed size of the array
-        final String DATASET = ""; // Set the directory of the data set
+        final String DATASET = "src/datasets/medical_records_dataset_ascending.csv"; // Set the directory of the data set
         MedicalRecords[] medicalRecordsArray = new MedicalRecords[SIZE];
 
         int recordsCount = readMedicalRecordsFromCSV(DATASET, medicalRecordsArray);
