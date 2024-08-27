@@ -45,7 +45,7 @@ public class SortingAlgorithmCounter implements SortProfiler {
         }
 
         // Include slack from the outer and inner loops
-        statementCount += 2;
+        statementCount += 2; // II
         return statementCount;
     }
 
@@ -58,19 +58,19 @@ public class SortingAlgorithmCounter implements SortProfiler {
             MedicalRecords another = medicalRecords[i];
             int j = i - 1;
 
-            while (j >= 0 && medicalRecords[j].compareTo(another) > 0) {
+            // This is originally while loop, but converted to for loop due to counting issues
+            for (; j >= 0 && medicalRecords[j].compareTo(another) > 0; j--, statementCount++) {
                 medicalRecords[j + 1] = medicalRecords[j];
-                j = j - 1;
-                statementCount += 2;
+                statementCount++;
             }
 
             if (j + 1 < medicalRecords.length) {
                 medicalRecords[j + 1] = another;
                 statementCount++;
             }
-            statementCount += 4;
+            statementCount += 3;
         }
-        statementCount += 2; // the missing 1 from for loop and while loop
+        statementCount += 2; // the missing 1 from outer and inner for loop
         return statementCount;
     }
 
@@ -82,10 +82,9 @@ public class SortingAlgorithmCounter implements SortProfiler {
         for (int i = 0; i < medicalRecords.length - 1; i++, statementCount++) {
             int minIndex = i;
             for (int j = i + 1; j < medicalRecords.length; j++, statementCount++) {
-                statementCount++;
+                statementCount++; // counter for the if condition below because it executes once, whether true or false
 
-                // Check for null before comparison
-                if (medicalRecords[minIndex].compareTo(medicalRecords[j]) < 0) {
+                if (medicalRecords[j].compareTo(medicalRecords[minIndex]) < 0) {
                     minIndex = j;
                     statementCount++;
                 }
@@ -96,9 +95,9 @@ public class SortingAlgorithmCounter implements SortProfiler {
                 MedicalRecords temp = medicalRecords[i];
                 medicalRecords[i] = medicalRecords[minIndex];
                 medicalRecords[minIndex] = temp;
-                statementCount += 4; // Statements for the swap
+                statementCount += 3; // Statements for the swap
             }
-            statementCount += 2;
+            statementCount += 2; // one for the minIndex and the if condition
         }
         statementCount += 2; // Account for the final loop statements
         return statementCount;

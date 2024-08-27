@@ -17,7 +17,7 @@ public class MainClassForReference2 implements Runnable{
 
     private static MedicalRecords[] medicalRecordsAO; // AO = Ascending Order
     private static MedicalRecords[] medicalRecordsDO; // DO = Descending Order
-    private static MedicalRecords[] medicalRecordsRO; // RO = Randomly Order\
+    private static MedicalRecords[] medicalRecordsRO; // RO = Randomly Order
 
     private static final long[] BUBBLE_SORT_RESULTS = new long[3];
     private static final long[] INSERTION_SORT_RESULTS = new long[3];
@@ -40,7 +40,7 @@ public class MainClassForReference2 implements Runnable{
         pressEnter(kbdReader);
         while (true){
             int choice = readChoice(kbdReader); // Read choice from the menu
-            if (choice == 7){
+            if (choice == 6){
                 System.exit(0); // Terminate the program
             }
 
@@ -89,8 +89,8 @@ public class MainClassForReference2 implements Runnable{
                 2. 50 000
                 3. 200 000
                 4. 500 000
-                6. 1 000 000
-                7. Exit
+                5. 1 000 000
+                6. Exit
                 """);
     }
 
@@ -198,14 +198,14 @@ public class MainClassForReference2 implements Runnable{
         selectionSortTasks[2] = () -> counter.getSelectionSortStatementCount(medicalRecordsRO);
 
         // Submit tasks and store Future objects
-        Future<Long>[] bubbleSortResults = new Future[3];
-        Future<Long>[] insertionSortResults = new Future[3];
-        Future<Long>[] selectionSortResults = new Future[3];
+        Future<Long>[] bubbleSortFutures = new Future[3];
+        Future<Long>[] insertionSortFutures = new Future[3];
+        Future<Long>[] selectionSortFutures = new Future[3];
 
         for (int i = 0; i < 3; i++) {
-            bubbleSortResults[i] = executorService.submit(bubbleSortTasks[i]);
-            insertionSortResults[i] = executorService.submit(insertionSortTasks[i]);
-            selectionSortResults[i] = executorService.submit(selectionSortTasks[i]);
+            bubbleSortFutures[i] = executorService.submit(bubbleSortTasks[i]);
+            insertionSortFutures[i] = executorService.submit(insertionSortTasks[i]);
+            selectionSortFutures[i] = executorService.submit(selectionSortTasks[i]);
         }
 
         executorService.shutdown();
@@ -213,9 +213,9 @@ public class MainClassForReference2 implements Runnable{
         try {
             // Wait for all tasks to complete and collect results
             for (int i = 0; i < 3; i++) {
-                BUBBLE_SORT_RESULTS[i] = bubbleSortResults[i].get();
-                INSERTION_SORT_RESULTS[i] = insertionSortResults[i].get();
-                SELECTION_SORT_RESULTS[i] = selectionSortResults[i].get();
+                BUBBLE_SORT_RESULTS[i] = bubbleSortFutures[i].get();
+                INSERTION_SORT_RESULTS[i] = insertionSortFutures[i].get();
+                SELECTION_SORT_RESULTS[i] = selectionSortFutures[i].get();
             }
             System.out.println("All sorting tasks are completed.");
         } catch (InterruptedException | ExecutionException e) {
