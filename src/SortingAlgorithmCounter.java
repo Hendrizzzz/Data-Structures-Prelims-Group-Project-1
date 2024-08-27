@@ -15,8 +15,8 @@ public class SortingAlgorithmCounter implements SortProfiler {
      * @return Number of statements executed.
      */
     @Override
-    public int getBubbleSortStatementCount(MedicalRecords[] medicalRecords) {
-        int statementCount = 0;
+    public long getBubbleSortStatementCount(MedicalRecords[] medicalRecords) {
+        long statementCount = 0;
 
         for (int i = 0; i < medicalRecords.length - 1; i++, statementCount++) {
             boolean swapped = false;
@@ -35,7 +35,7 @@ public class SortingAlgorithmCounter implements SortProfiler {
                 }
             }
 
-            // Increment statement count for the outer loop iteration
+            // boolean declaration and initialization, and the if-condition below
             statementCount += 2;
 
             if (!swapped) { // If inner loop swapped no two elements, then break
@@ -52,8 +52,8 @@ public class SortingAlgorithmCounter implements SortProfiler {
 
 
     @Override
-    public int getInsertionSortStatementCount(MedicalRecords[] medicalRecords) {
-        int statementCount = 0;
+    public long getInsertionSortStatementCount(MedicalRecords[] medicalRecords) {
+        long statementCount = 0;
         for (int i = 1; i < medicalRecords.length; i++, statementCount++) {
             MedicalRecords another = medicalRecords[i];
             int j = i - 1;
@@ -66,6 +66,7 @@ public class SortingAlgorithmCounter implements SortProfiler {
 
             if (j + 1 < medicalRecords.length) {
                 medicalRecords[j + 1] = another;
+                statementCount++;
             }
             statementCount += 4;
         }
@@ -76,8 +77,8 @@ public class SortingAlgorithmCounter implements SortProfiler {
 
 
     @Override
-    public int getSelectionSortStatementCount(MedicalRecords[] medicalRecords) {
-        int statementCount = 0;
+    public long getSelectionSortStatementCount(MedicalRecords[] medicalRecords) {
+        long statementCount = 0;
         for (int i = 0; i < medicalRecords.length - 1; i++, statementCount++) {
             int minIndex = i;
             for (int j = i + 1; j < medicalRecords.length; j++, statementCount++) {
@@ -97,6 +98,7 @@ public class SortingAlgorithmCounter implements SortProfiler {
                 medicalRecords[minIndex] = temp;
                 statementCount += 4; // Statements for the swap
             }
+            statementCount += 2;
         }
         statementCount += 2; // Account for the final loop statements
         return statementCount;
