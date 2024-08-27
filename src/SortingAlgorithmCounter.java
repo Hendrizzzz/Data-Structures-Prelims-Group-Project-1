@@ -58,7 +58,7 @@ public class SortingAlgorithmCounter implements SortProfiler {
             MedicalRecords another = medicalRecords[i];
             int j = i - 1;
 
-            while (medicalRecords[j].compareTo(another) > 0) {
+            while (j >= 0 && medicalRecords[j].compareTo(another) > 0) {
                 medicalRecords[j + 1] = medicalRecords[j];
                 j = j - 1;
                 statementCount += 2;
