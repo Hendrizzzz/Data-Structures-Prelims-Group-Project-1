@@ -12,7 +12,6 @@ import java.util.Scanner;
  *
  *
  *
- * @see SortingAlgorithmCounter
  */
 public class SortingAlgorithmBenchmark {
     public static void main(String[] args) {
@@ -22,7 +21,7 @@ public class SortingAlgorithmBenchmark {
 
         final int SIZE = 1000000; // Set the fixed size of the array
         final String DATASET = "src/datasets/medical_records_dataset_ascending.csv"; // Set the directory of the data set
-        MedicalRecords[] medicalRecordsArray = new MedicalRecords[SIZE];
+        MedicalRecord[] medicalRecordsArray = new MedicalRecord[SIZE];
 
         int recordsCount = readMedicalRecordsFromCSV(DATASET, medicalRecordsArray);
 
@@ -36,7 +35,7 @@ public class SortingAlgorithmBenchmark {
      * Reads from the dataset and populates a fixed array
      * @author Hyowon
      * */
-    public static int readMedicalRecordsFromCSV(String fileName, MedicalRecords[] medicalRecordsArray) {
+    public static int readMedicalRecordsFromCSV(String fileName, MedicalRecord[] medicalRecordsArray) {
         int count = 0;
 
         try (Scanner scanner = new Scanner(new File(fileName))) {
@@ -76,7 +75,7 @@ public class SortingAlgorithmBenchmark {
                 String reasonForVisit = fields[fields.length - 2].trim();
                 String physician = fields[fields.length - 1].trim();
 
-                MedicalRecords record = new MedicalRecords(lastName, firstName, patientID, gender, contactInfo, medications, reasonForVisit, physician);
+                MedicalRecord record = new MedicalRecord(lastName, firstName, patientID, gender, contactInfo, medications, reasonForVisit, physician);
                 medicalRecordsArray[count] = record;
                 count++;
             }
@@ -97,7 +96,7 @@ public class SortingAlgorithmBenchmark {
      * 4. Move the boundary of the sorted portion one step forward by increasing i.
      * 5. Repeat the above steps until the entire array is sorted.
      */
-    private static void selectionSort(MedicalRecords[] medicalRecordsArray) {
+    private static void selectionSort(MedicalRecord[] medicalRecordsArray) {
          int n = medicalRecordsArray.length;
 
         for (int i = 0; i < n - 1; i++) {
@@ -110,7 +109,7 @@ public class SortingAlgorithmBenchmark {
             }
 
             if (minIndex != i) {
-                MedicalRecords temp = medicalRecordsArray[i];
+                MedicalRecord temp = medicalRecordsArray[i];
                 medicalRecordsArray[i] = medicalRecordsArray[minIndex];
                 medicalRecordsArray[minIndex] = temp;
             }
@@ -129,9 +128,9 @@ public class SortingAlgorithmBenchmark {
      * 4. If said condition was satisfied, left element is moved to the right.
      * 5. The variable used in process 1 will then be assigned with the value with its sorted placement.
      * */
-    private static void insertionSort(MedicalRecords[] medicalRecordsArray, int dataSize) {
+    private static void insertionSort(MedicalRecord[] medicalRecordsArray, int dataSize) {
         for (int i = 1; i < dataSize; ++i) {
-            MedicalRecords another = medicalRecordsArray[i];
+            MedicalRecord another = medicalRecordsArray[i];
             int j = i - 1;
             while (j >= 0 && medicalRecordsArray[j].compareTo(another) > 0) {
                 medicalRecordsArray[j + 1] = medicalRecordsArray[j];
@@ -149,7 +148,7 @@ public class SortingAlgorithmBenchmark {
      * 2. If the left element is greater than the right element, swap them.
      * 3. Repeat until no swaps are needed, meaning the array is sorted.
      */
-    private static void  bubbleSort(MedicalRecords[] medicalRecordsArray) {
+    private static void  bubbleSort(MedicalRecord[] medicalRecordsArray) {
         int n = medicalRecordsArray.length;
         boolean swapped;
 
@@ -158,7 +157,7 @@ public class SortingAlgorithmBenchmark {
 
             for (int j = 0; j < n - i - 1; j++) {
                 if (medicalRecordsArray[j].compareTo(medicalRecordsArray[j + 1]) > 0) {
-                    MedicalRecords temp = medicalRecordsArray[j];
+                    MedicalRecord temp = medicalRecordsArray[j];
                     medicalRecordsArray[j] = medicalRecordsArray[j + 1];
                     medicalRecordsArray[j + 1] = temp;
 

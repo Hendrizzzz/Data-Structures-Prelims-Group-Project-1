@@ -1,7 +1,7 @@
 /**
  * Represents the object to be sorted.
  */
-public class MedicalRecords implements Comparable<MedicalRecords> {
+public class MedicalRecord implements Comparable<MedicalRecord> {
     String lastName;
     String firstName;
     String patientID;
@@ -15,7 +15,7 @@ public class MedicalRecords implements Comparable<MedicalRecords> {
      * Constructor
      * @author Hyowon
      * */
-    public MedicalRecords(String lastName, String firstName, String patientID, String gender, long contactInfo,
+    public MedicalRecord(String lastName, String firstName, String patientID, String gender, long contactInfo,
                           String medications, String reasonForVisit, String physician) {
         this.lastName = lastName;
         this.firstName = firstName;
@@ -124,7 +124,7 @@ public class MedicalRecords implements Comparable<MedicalRecords> {
      * @author Hyowon
      * */
     @Override
-    public int compareTo(MedicalRecords o) {
+    public int compareTo(MedicalRecord o) {
         return this.lastName.compareTo(o.lastName);
     }
 }

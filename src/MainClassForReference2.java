@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.Arrays;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class MainClassForReference2 implements Runnable{
 
@@ -15,9 +17,9 @@ public class MainClassForReference2 implements Runnable{
 
     private final static int[] DATASET_SIZES = {10000, 50000, 200000, 500000, 1000000}; // 10k, 50k, 200k, 500k, 1000k
 
-    private static MedicalRecords[] medicalRecordsAO; // AO = Ascending Order
-    private static MedicalRecords[] medicalRecordsDO; // DO = Descending Order
-    private static MedicalRecords[] medicalRecordsRO; // RO = Randomly Order
+    private static MedicalRecord[] medicalRecordsAO; // AO = Ascending Order
+    private static MedicalRecord[] medicalRecordsDO; // DO = Descending Order
+    private static MedicalRecord[] medicalRecordsRO; // RO = Randomly Order
 
     private static final long[] BUBBLE_SORT_RESULTS = new long[3];
     private static final long[] INSERTION_SORT_RESULTS = new long[3];
@@ -101,9 +103,9 @@ public class MainClassForReference2 implements Runnable{
         int datasetSize = DATASET_SIZES[choice - 1];
 
         // Initialize medical records arrays
-        medicalRecordsAO = new MedicalRecords[datasetSize];
-        medicalRecordsDO = new MedicalRecords[datasetSize];
-        medicalRecordsRO = new MedicalRecords[datasetSize];
+        medicalRecordsAO = new MedicalRecord[datasetSize];
+        medicalRecordsDO = new MedicalRecord[datasetSize];
+        medicalRecordsRO = new MedicalRecord[datasetSize];
 
         // Create threads for parallel sorting
         System.out.println(GREEN + BOLD + "Reading data from the file...");
@@ -131,7 +133,7 @@ public class MainClassForReference2 implements Runnable{
      * @author Hyowon
      *
      * */
-    public static void readMedicalRecordsFromCSV(String fileName, MedicalRecords[] medicalRecordsArray) {
+    public static void readMedicalRecordsFromCSV(String fileName, MedicalRecord[] medicalRecordsArray) {
         int count = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
@@ -163,7 +165,7 @@ public class MainClassForReference2 implements Runnable{
                 String reasonForVisit = fields[fields.length - 2].trim();
                 String physician = fields[fields.length - 1].trim();
 
-                MedicalRecords record = new MedicalRecords(lastName, firstName, patientID, gender, contactInfo, medications, reasonForVisit, physician);
+                MedicalRecord record = new MedicalRecord(lastName, firstName, patientID, gender, contactInfo, medications, reasonForVisit, physician);
                 medicalRecordsArray[count] = record;
                 count++;
             }
@@ -174,55 +176,63 @@ public class MainClassForReference2 implements Runnable{
         }
     }
 
-    private void sortData() {
-        System.out.println("Executing sorting algorithms and tracking statement counts...");
-        SortingAlgorithmCounter counter = new SortingAlgorithmCounter();
-        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-        // Initialize tasks
-        Callable<Long>[] bubbleSortTasks = new Callable[3];
-        Callable<Long>[] insertionSortTasks = new Callable[3];
-        Callable<Long>[] selectionSortTasks = new Callable[3];
+    /**
+     * Algorithm
+     * 1. Uses the Callable to define tasks to execute which is sort and get statementCount (the () -> { })
+     * 2. Submit tasks to Executor which will run in a separate thread
+     * 3. Use the Future to retrieve and store results.
+     */
+    private void sortData() {
+        System.out.println("Executing sorting algorithms concurrently and tracking statement counts...");
+        ExecutorService executor = Executors.newFixedThreadPool(9);
+        Future<Long>[] futures = new Future[9];
+
+        // index = 0 is AO, index = 1 is DO, index = 2 is RO
+        BubbleSort[] bubbleSorters = {new BubbleSort(), new BubbleSort(), new BubbleSort()};
+        InsertionSort[] insertionSorters = {new InsertionSort(), new InsertionSort(), new InsertionSort()};
+        SelectionSort[] selectionSorters = {new SelectionSort(), new SelectionSort(), new SelectionSort()};
+
+        MedicalRecord[][] records = {medicalRecordsAO, medicalRecordsDO, medicalRecordsRO};
 
         System.out.println("Sorting in progress, please wait...");
-        bubbleSortTasks[0] = () -> counter.getBubbleSortStatementCount(medicalRecordsAO);
-        bubbleSortTasks[1] = () -> counter.getBubbleSortStatementCount(medicalRecordsDO);
-        bubbleSortTasks[2] = () -> counter.getBubbleSortStatementCount(medicalRecordsRO);
 
-        insertionSortTasks[0] = () -> counter.getInsertionSortStatementCount(medicalRecordsAO);
-        insertionSortTasks[1] = () -> counter.getInsertionSortStatementCount(medicalRecordsDO);
-        insertionSortTasks[2] = () -> counter.getInsertionSortStatementCount(medicalRecordsRO);
-
-        selectionSortTasks[0] = () -> counter.getSelectionSortStatementCount(medicalRecordsAO);
-        selectionSortTasks[1] = () -> counter.getSelectionSortStatementCount(medicalRecordsDO);
-        selectionSortTasks[2] = () -> counter.getSelectionSortStatementCount(medicalRecordsRO);
-
-        // Submit tasks and store Future objects
-        Future<Long>[] bubbleSortFutures = new Future[3];
-        Future<Long>[] insertionSortFutures = new Future[3];
-        Future<Long>[] selectionSortFutures = new Future[3];
-
+        // Loop through the sorters and records arrays
         for (int i = 0; i < 3; i++) {
-            bubbleSortFutures[i] = executorService.submit(bubbleSortTasks[i]);
-            insertionSortFutures[i] = executorService.submit(insertionSortTasks[i]);
-            selectionSortFutures[i] = executorService.submit(selectionSortTasks[i]);
+            final int index = i;
+            futures[i] = executor.submit(() -> {
+                bubbleSorters[index].sort(records[index]);
+                return bubbleSorters[index].getStatementCount();
+            });
+
+            futures[i + 3] = executor.submit(() -> {
+                insertionSorters[index].sort(records[index]);
+                return insertionSorters[index].getStatementCount();
+            });
+
+            futures[i + 6] = executor.submit(() -> {
+                selectionSorters[index].sort(records[index]);
+                return selectionSorters[index].getStatementCount();
+            });
         }
 
-        executorService.shutdown();
-
-        try {
-            // Wait for all tasks to complete and collect results
-            for (int i = 0; i < 3; i++) {
-                BUBBLE_SORT_RESULTS[i] = bubbleSortFutures[i].get();
-                INSERTION_SORT_RESULTS[i] = insertionSortFutures[i].get();
-                SELECTION_SORT_RESULTS[i] = selectionSortFutures[i].get();
-            }
-            System.out.println("All sorting tasks are completed.");
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        retrieveResults(futures, executor);
     }
 
+    private void retrieveResults(Future<Long>[] futures, ExecutorService executor) {
+        // Retrieve and assign results
+        try {
+            for (int i = 0; i < 3; i++) {
+                BUBBLE_SORT_RESULTS[i] = futures[i].get();
+                INSERTION_SORT_RESULTS[i] = futures[i + 3].get();
+                SELECTION_SORT_RESULTS[i] = futures[i + 6].get();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            executor.shutdown();
+        }
+    }
 
 
     private void displayResults(String message) {
