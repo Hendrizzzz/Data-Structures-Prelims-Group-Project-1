@@ -2,14 +2,14 @@
  * Represents the object to be sorted.
  */
 public class MedicalRecords implements Comparable<MedicalRecords> {
-    String lastName;
-    String firstName;
-    String patientID;
-    String gender;
-    long contactInfo;
-    String medications;
-    String reasonForVisit;
-    String physician;
+    private String lastName;
+    private String firstName;
+    private String patientID;
+    private String gender;
+    private long contactInfo;
+    private String medications;
+    private String reasonForVisit;
+    private String physician;
 
     /**
      * Constructor
