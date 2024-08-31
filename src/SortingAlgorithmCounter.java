@@ -47,8 +47,7 @@ public class SortingAlgorithmCounter implements SortProfiler {
             }
         }
 
-        // Include slack from the outer and inner loops
-        statementCount += 1; // II
+        statementCount += 2; // the slack from the outer for loop and for the return statement
         return statementCount;
     }
 
@@ -67,15 +66,15 @@ public class SortingAlgorithmCounter implements SortProfiler {
                 medicalRecordsCopy[j + 1] = medicalRecordsCopy[j];
                 statementCount++;
             }
-            statementCount++;
+            statementCount++; // the slack from the inner for loop
 
             if (j + 1 < medicalRecordsCopy.length) {
                 medicalRecordsCopy[j + 1] = another;
                 statementCount++;
             }
-            statementCount += 3;
+            statementCount += 3; // the first two statements and the counter for the if-condition
         }
-        statementCount += 1; // the missing 1 from outer and inner for loop
+        statementCount += 2; // the missing 1 from outer and for the return statement
         return statementCount;
     }
 
@@ -104,7 +103,7 @@ public class SortingAlgorithmCounter implements SortProfiler {
                 statementCount += 3; // Statements for the swap
             }
         }
-        statementCount += 1; // 1 from the slack from the outer for loop
+        statementCount += 2; // 1 from the slack from the outer for loop and 1 for the return statement
         return statementCount;
     }
 
