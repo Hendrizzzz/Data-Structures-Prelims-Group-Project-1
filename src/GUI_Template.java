@@ -1,41 +1,40 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class GUI_Template implements ActionListener {
+public class GUI_Template {
     public static void main(String[] args) {
-        JFrame frame = new JFrame();
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Sorting Benchmark");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(800, 500);
+            frame.setLocationRelativeTo(null);
 
-        JButton button = new JButton("Start");
-        button.setBounds(100,100, 100, 100  );
-        //button.setFocusable(false);
-        button.setVerticalAlignment(JButton.BOTTOM);
-        button.setVerticalAlignment(JButton.CENTER);
+            // Create components
+            JButton button = new JButton("Start");
+            String[] sizes = {"10000", "50000", "200000", "500000", "1000000"};
+            JComboBox<String> dropdown = new JComboBox<>(sizes);
+            JTextArea textArea = new JTextArea();
+            textArea.setEditable(false);
+            textArea.setLineWrap(true);  // Ensure lines wrap in the text area
+            textArea.setWrapStyleWord(true);  // Wrap words rather than breaking them
 
+            // Set layout manager
+            frame.setLayout(new BorderLayout());
 
-        JLabel label = new JLabel();
-        label.setText("SORT");
+            // Create a panel for the dropdown and button
+            JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            controlPanel.add(dropdown);
+            controlPanel.add(button);
 
-        JComboBox dropdown = new JComboBox();
-        JPanel panel = new JPanel();
+            // Create a panel for the text area and place it in the center
+            JPanel textAreaPanel = new JPanel(new BorderLayout());
+            textAreaPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-        frame.add(button);
-        //frame.add(label);
+            // Add components to the frame
+            frame.add(controlPanel, BorderLayout.NORTH); // Add controlPanel at the top
+            frame.add(textAreaPanel, BorderLayout.CENTER); // Add textAreaPanel in the center
 
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.setSize(1000,800);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(true);
-        frame.getContentPane();
-        frame.setLayout(new GridBagLayout());
-        frame.add(button);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
+            frame.setVisible(true);
+        });
     }
 }
