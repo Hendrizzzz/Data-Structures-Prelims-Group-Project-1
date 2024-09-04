@@ -1,4 +1,5 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.concurrent.*;
 
@@ -19,9 +20,9 @@ public class MainClassForReference2 implements Runnable{
     private static MedicalRecords[] medicalRecordsDO; // DO = Descending Order
     private static MedicalRecords[] medicalRecordsRO; // RO = Randomly Order
 
-    private static final long[] BUBBLE_SORT_RESULTS = new long[3];
-    private static final long[] INSERTION_SORT_RESULTS = new long[3];
-    private static final long[] SELECTION_SORT_RESULTS = new long[3];
+    private static final BigInteger[] BUBBLE_SORT_RESULTS = new BigInteger[3];
+    private static final BigInteger[] INSERTION_SORT_RESULTS = new BigInteger[3];
+    private static final BigInteger[] SELECTION_SORT_RESULTS = new BigInteger[3];
 
 
 
@@ -180,9 +181,9 @@ public class MainClassForReference2 implements Runnable{
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         // Initialize tasks
-        Callable<Long>[] bubbleSortTasks = new Callable[3];
-        Callable<Long>[] insertionSortTasks = new Callable[3];
-        Callable<Long>[] selectionSortTasks = new Callable[3];
+        Callable<BigInteger>[] bubbleSortTasks = new Callable[3];
+        Callable<BigInteger>[] insertionSortTasks = new Callable[3];
+        Callable<BigInteger>[] selectionSortTasks = new Callable[3];
 
         System.out.println("Sorting in progress, please wait...");
         bubbleSortTasks[0] = () -> counter.getBubbleSortStatementCount(medicalRecordsAO);
@@ -198,9 +199,9 @@ public class MainClassForReference2 implements Runnable{
         selectionSortTasks[2] = () -> counter.getSelectionSortStatementCount(medicalRecordsRO);
 
         // Submit tasks and store Future objects
-        Future<Long>[] bubbleSortFutures = new Future[3];
-        Future<Long>[] insertionSortFutures = new Future[3];
-        Future<Long>[] selectionSortFutures = new Future[3];
+        Future<BigInteger>[] bubbleSortFutures = new Future[3];
+        Future<BigInteger>[] insertionSortFutures = new Future[3];
+        Future<BigInteger>[] selectionSortFutures = new Future[3];
 
         for (int i = 0; i < 3; i++) {
             bubbleSortFutures[i] = executorService.submit(bubbleSortTasks[i]);
@@ -234,10 +235,10 @@ public class MainClassForReference2 implements Runnable{
         }
 
         System.out.println(BOLD + "\n\n" + message);
-        System.out.printf("%-16s%-17s%-17s%-17s%n", "", "Bubble Sort", "Insertion Sort", "Selection Sort");
-        System.out.printf("%-16s%-17d%-17d%-17d%n", "Best-Case", BUBBLE_SORT_RESULTS[0], INSERTION_SORT_RESULTS[0], SELECTION_SORT_RESULTS[0]);
-        System.out.printf("%-16s%-17d%-17d%-17d%n", "Worst-Case", BUBBLE_SORT_RESULTS[1], INSERTION_SORT_RESULTS[1], SELECTION_SORT_RESULTS[1]);
-        System.out.printf("%-16s%-17d%-17d%-17d%n%n%n" + RESET, "Average-Case", BUBBLE_SORT_RESULTS[2], INSERTION_SORT_RESULTS[2], SELECTION_SORT_RESULTS[2]);
+        System.out.printf("%-15s%-35s%-35s%-35s%n", "", "Bubble Sort", "Insertion Sort", "Selection Sort");
+        System.out.printf("%-15s%-35s%-35s%-35s%n", "Best-Case", BUBBLE_SORT_RESULTS[0].toString(), INSERTION_SORT_RESULTS[0].toString(), SELECTION_SORT_RESULTS[0].toString());
+        System.out.printf("%-15s%-35s%-35s%-35s%n", "Worst-Case", BUBBLE_SORT_RESULTS[1].toString(), INSERTION_SORT_RESULTS[1].toString(), SELECTION_SORT_RESULTS[1].toString());
+        System.out.printf("%-15s%-35s%-35s%-35s%n%n%n" + RESET, "Average-Case", BUBBLE_SORT_RESULTS[2].toString(), INSERTION_SORT_RESULTS[2].toString(), SELECTION_SORT_RESULTS[2].toString());
     }
 
 
