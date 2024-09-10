@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"<Unnamed>","l":"MedicalRecords"},{"p":"<Unnamed>","l":"SortingAlgorithmBenchmark"},{"p":"<Unnamed>","l":"SortingAlgorithmCounter"},{"p":"<Unnamed>","l":"SortingAlgorithmGUI"},{"p":"<Unnamed>","l":"SortProfiler"}];updateSearchResults();

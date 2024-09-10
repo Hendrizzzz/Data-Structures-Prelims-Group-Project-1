@@ -3,6 +3,23 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.concurrent.*;
 
+/**
+ * A class to benchmark various sorting algorithms on medical records datasets.
+ * <p>
+ * This class provides functionality to read datasets from CSV files, sort the datasets using different sorting algorithms,
+ * and measure the performance of these algorithms.
+ * </p>
+ * <p>
+ * It supports three different datasets: ascending order, descending order, and random order. The class benchmarks Bubble Sort,
+ * Insertion Sort, and Selection Sort algorithms, and records the number of statements executed by each algorithm.
+ * </p>
+ * <p>
+ * The class uses multithreading to read the datasets concurrently and utilizes an {@link ExecutorService} to perform sorting operations in parallel.
+ * </p>
+ *
+ * @see MedicalRecords
+ * @see SortingAlgorithmCounter
+ */
 public class SortingAlgorithmBenchmark {
 
     // CSV file paths from repository root
@@ -19,49 +36,16 @@ public class SortingAlgorithmBenchmark {
     protected static final BigInteger[] INSERTION_SORT_RESULTS = new BigInteger[3];
     protected static final BigInteger[] SELECTION_SORT_RESULTS = new BigInteger[3];
 
-    private void runProgram() {
-        BufferedReader kbdReader = new BufferedReader(new InputStreamReader(System.in));
-        //pressEnter(kbdReader);
-        while (true){
-            int choice = readChoice(kbdReader); // Read choice from the menu
-            if (choice == 6){
-                System.exit(0); // Terminate the program
-            }
-
-            long startTime = System.currentTimeMillis(); // to be removed
-
-            readData(choice);
-            sortData();
-
-            //displayResults("Results for dataset size (" + DATASET_SIZES[choice - 1] + ")");
-
-            long endTime = System.currentTimeMillis();
-            long duration = (endTime - startTime) / 1000; // in seconds
-            System.out.println("Processing time: " + duration + " seconds"); // to be removed
-            //pressEnter(kbdReader);
-        }
-    }
-
-    protected int readChoice(BufferedReader kbdReader) {
-        int choice = 0;
-        boolean isChoiceValid = false;
-        while (!isChoiceValid) {
-            try {
-                choice = Integer.parseInt(kbdReader.readLine());
-                if (choice <= 0 || choice >= 7) {
-                    System.out.println("Invalid input. Choice not found. ");
-                    continue;
-                }
-                isChoiceValid = true;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter the corresponding number of the choice you pick.");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return choice;
-    }
-
+    /**
+     * Reads data from CSV files and populates arrays of {@link MedicalRecords} objects.
+     * <p>
+     * This method initializes the arrays for medical records and starts separate threads to read data from CSV files concurrently.
+     * After reading, it waits for all threads to finish before returning.
+     * </p>
+     *
+     * @param choice an integer representing the size of the dataset to be used.
+     *               It corresponds to the index in the {@code DATASET_SIZES} array (1-based index).
+     */
     protected static void readData(int choice) {
         int datasetSize = DATASET_SIZES[choice - 1];
 
@@ -90,10 +74,16 @@ public class SortingAlgorithmBenchmark {
     }
 
     /**
-     * Reads from the dataset and populates a fixed array
-     * @author Hyowon
+     * Reads medical records from a CSV file and populates the provided array.
+     * <p>
+     * This method processes the CSV file line by line, parsing the fields and creating {@link MedicalRecords} objects.
+     * It handles cases where medications may contain commas and provides appropriate error messages if the file is not found
+     * or if there is an issue reading the file.
+     * </p>
      *
-     * */
+     * @param fileName the path to the CSV file.
+     * @param medicalRecordsArray the array to populate with {@link MedicalRecords} objects.
+     */
     public static void readMedicalRecordsFromCSV(String fileName, MedicalRecords[] medicalRecordsArray) {
         int count = 0;
 
@@ -137,8 +127,16 @@ public class SortingAlgorithmBenchmark {
         }
     }
 
+    /**
+     * Sorts the medical records data using various sorting algorithms and measures the performance.
+     * <p>
+     * This method creates tasks for sorting the data using Bubble Sort, Insertion Sort, and Selection Sort algorithms.
+     * It submits these tasks to an {@link ExecutorService} to be executed in parallel and collects the results.
+     * The number of statements executed by each sorting algorithm is recorded in the static arrays {@code BUBBLE_SORT_RESULTS},
+     * {@code INSERTION_SORT_RESULTS}, and {@code SELECTION_SORT_RESULTS}.
+     * </p>
+     */
     protected static void sortData() {
-        System.out.println("Executing sorting algorithms and tracking statement counts...");
         SortingAlgorithmCounter counter = new SortingAlgorithmCounter();
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -147,7 +145,6 @@ public class SortingAlgorithmBenchmark {
         Callable<BigInteger>[] insertionSortTasks = new Callable[3];
         Callable<BigInteger>[] selectionSortTasks = new Callable[3];
 
-        System.out.println("Sorting in progress, please wait...");
         bubbleSortTasks[0] = () -> counter.getBubbleSortStatementCount(medicalRecordsAO);
         bubbleSortTasks[1] = () -> counter.getBubbleSortStatementCount(medicalRecordsDO);
         bubbleSortTasks[2] = () -> counter.getBubbleSortStatementCount(medicalRecordsRO);
@@ -180,7 +177,6 @@ public class SortingAlgorithmBenchmark {
                 INSERTION_SORT_RESULTS[i] = insertionSortFutures[i].get();
                 SELECTION_SORT_RESULTS[i] = selectionSortFutures[i].get();
             }
-            System.out.println("All sorting tasks are completed.");
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
