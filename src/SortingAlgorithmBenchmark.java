@@ -5,10 +5,6 @@ import java.util.concurrent.*;
 
 public class SortingAlgorithmBenchmark {
 
-    public static final String GREEN = "\033[32m";
-    public static final String BOLD = "\033[1m";
-    public static final String RESET = "\033[0m";
-
     // CSV file paths from repository root
     private final static String ASCENDING_ORDER_CSV = "src/datasets/medical_records_dataset_ascending.csv";
     private final static String DESCENDING_ORDER_CSV = "src/datasets/medical_records_dataset_descending.csv";
@@ -67,7 +63,6 @@ public class SortingAlgorithmBenchmark {
     }
 
     protected static void readData(int choice) {
-        System.out.println(GREEN + BOLD + "Initializing file read operation...");
         int datasetSize = DATASET_SIZES[choice - 1];
 
         // Initialize medical records arrays
@@ -76,7 +71,6 @@ public class SortingAlgorithmBenchmark {
         medicalRecordsRO = new MedicalRecords[datasetSize];
 
         // Create threads for parallel sorting
-        System.out.println(GREEN + BOLD + "Reading data from the file...");
         Thread readAscendingDataThread1 = new Thread(() -> readMedicalRecordsFromCSV(ASCENDING_ORDER_CSV, medicalRecordsAO));
         Thread readAscendingDataThread2 = new Thread(() -> readMedicalRecordsFromCSV(DESCENDING_ORDER_CSV, medicalRecordsDO));
         Thread readAscendingDataThread3 = new Thread(() -> readMedicalRecordsFromCSV(RANDOM_ORDER_CSV, medicalRecordsRO));

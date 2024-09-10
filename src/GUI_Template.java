@@ -10,6 +10,8 @@ public class GUI_Template extends JFrame {
     private JButton startButton;
     private JTable resultsTable;
     private DefaultTableModel tableModel;
+    private JProgressBar progressBar;
+    private JLabel estimatedTimeLabel;
 
     private final String[] datasetSizes = {"10000", "50000", "200000", "500000", "1000000"};
     private final String[] algorithms = {"Bubble Sort", "Insertion Sort", "Selection Sort"};
@@ -26,6 +28,10 @@ public class GUI_Template extends JFrame {
         startButton = new JButton("Start");
         tableModel = new DefaultTableModel(new Object[]{"", "Bubble Sort", "Insertion Sort", "Selection Sort"}, 0);
         resultsTable = new JTable(tableModel);
+        progressBar = new JProgressBar();
+        progressBar.setIndeterminate(true);
+        progressBar.setVisible(false);  // Initially hidden
+        estimatedTimeLabel = new JLabel("Estimated time remaining: Program not started");
 
         // Layout setup
         JPanel controlPanel = new JPanel();
@@ -36,6 +42,12 @@ public class GUI_Template extends JFrame {
         // Add components to the frame
         add(controlPanel, BorderLayout.NORTH);
         add(new JScrollPane(resultsTable), BorderLayout.CENTER);
+
+        // Adding progress bar and estimated time label at the bottom
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(progressBar, BorderLayout.NORTH);
+        bottomPanel.add(estimatedTimeLabel, BorderLayout.SOUTH);
+        add(bottomPanel, BorderLayout.SOUTH);
 
         // Action listener for the start button
         startButton.addActionListener(new ActionListener() {
@@ -49,19 +61,82 @@ public class GUI_Template extends JFrame {
 
     // Method to start sorting algorithms and update the table
     private void runSortingAlgorithms(int datasetSize) {
+        // Disable the start button and show the progress bar
+        startButton.setEnabled(false);
+        progressBar.setVisible(true);
+
+        // Set estimated time based on dataset size
+        String estimatedTime = getEstimatedTimeRemaining(datasetSize);
+        estimatedTimeLabel.setText("Estimated time remaining: " + estimatedTime);
+
         // Find index based on selected dataset size
-        int choice = 0;
+        final int choice = findChoiceIndex(datasetSize);
+
+        // Use SwingWorker to perform the task in the background
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                // Run the sorting algorithms
+                SortingAlgorithmBenchmark.readData(choice);
+                SortingAlgorithmBenchmark.sortData();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                try {
+                    get(); // This will re-throw any exception from doInBackground()
+                    // Update the table with results once sorting is complete
+                    updateResultsTable();
+
+                    // Hide the progress bar and reset label
+                    progressBar.setVisible(false);
+                    estimatedTimeLabel.setText("Estimated time remaining: Complete!");
+
+                } catch (Exception e) {
+                    // Handle exceptions that occurred during doInBackground
+                    JOptionPane.showMessageDialog(GUI_Template.this, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    // Re-enable the start button
+                    startButton.setEnabled(true);
+                }
+            }
+        };
+
+        // Start the worker thread
+        worker.execute();
+    }
+
+    // Helper method to find the index of the dataset size
+    private int findChoiceIndex(int datasetSize) {
         for (int i = 0; i < SortingAlgorithmBenchmark.DATASET_SIZES.length; i++) {
             if (SortingAlgorithmBenchmark.DATASET_SIZES[i] == datasetSize) {
-                choice = i + 1;
-                break;
+                return i + 1;
             }
         }
+        return 1; // Default value if not found (you might want to handle this case more robustly)
+    }
 
-        // Run the program for the selected dataset size
-        SortingAlgorithmBenchmark.readData(choice);
-        SortingAlgorithmBenchmark.sortData();
+    // Method to return estimated time based on dataset size
+    private String getEstimatedTimeRemaining(int datasetSize) {
+        switch (datasetSize) {
+            case 10000:
+                return "10 seconds";
+            case 50000:
+                return "5 minutes";
+            case 200000:
+                return "1 hour and 30 minutes";
+            case 500000:
+                return "12 hours and 30 minutes";
+            case 1000000:
+                return "32 hours";
+            default:
+                return "Unknown time";
+        }
+    }
 
+    // Method to update the table with sorting results
+    private void updateResultsTable() {
         // Clear existing table data
         tableModel.setRowCount(0);
 
