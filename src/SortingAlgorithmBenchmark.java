@@ -1,60 +1,123 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.io.*;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.concurrent.*;
 
-/**
- * This {@code SortingAlgorithmBenchmark} class is the Main Class
- *
- * <p> contains:
- * <ul>
- *   <li>An instance of {@code SortingAlgorithmCounter}.</li>
- * </ul>
- *
- *
- *
- * @see SortingAlgorithmCounter
- */
 public class SortingAlgorithmBenchmark {
-    public static void main(String[] args) {
-        // should have an object of SortingAlgorithmCounter
-        // this is where to read csv/txt files and place it in an array type of <Object> (to be renamed).
-        // Main Class, read files, call methods, and output results (if necessary)
 
-        final int SIZE = 1000000; // Set the fixed size of the array
-        final String DATASET = ""; // Set the directory of the data set
-        MedicalRecords[] medicalRecordsArray = new MedicalRecords[SIZE];
+    public static final String GREEN = "\033[32m";
+    public static final String BOLD = "\033[1m";
+    public static final String RESET = "\033[0m";
 
-        int recordsCount = readMedicalRecordsFromCSV(DATASET, medicalRecordsArray);
+    // CSV file paths from repository root
+    private final static String ASCENDING_ORDER_CSV = "src/datasets/medical_records_dataset_ascending.csv";
+    private final static String DESCENDING_ORDER_CSV = "src/datasets/medical_records_dataset_descending.csv";
+    private final static String RANDOM_ORDER_CSV = "src/datasets/medical_records_dataset_random.csv";
 
-        // Adjust your Console Cycle Buffer Size in IntelliJ to see the entirety of the console
-        for (int i = 0; i < recordsCount; i++) {
-            System.out.println("("+ (i + 1) + ") " + medicalRecordsArray[i]);
+    private static MedicalRecords[] medicalRecordsAO; // AO = Ascending Order
+    private static MedicalRecords[] medicalRecordsDO; // DO = Descending Order
+    private static MedicalRecords[] medicalRecordsRO; // RO = Randomly Order
+    protected final static int[] DATASET_SIZES = {10000, 50000, 200000, 500000, 1000000}; // 10k, 50k, 200k, 500k, 1000k
+
+    protected static final BigInteger[] BUBBLE_SORT_RESULTS = new BigInteger[3];
+    protected static final BigInteger[] INSERTION_SORT_RESULTS = new BigInteger[3];
+    protected static final BigInteger[] SELECTION_SORT_RESULTS = new BigInteger[3];
+
+    private void runProgram() {
+        BufferedReader kbdReader = new BufferedReader(new InputStreamReader(System.in));
+        //pressEnter(kbdReader);
+        while (true){
+            int choice = readChoice(kbdReader); // Read choice from the menu
+            if (choice == 6){
+                System.exit(0); // Terminate the program
+            }
+
+            long startTime = System.currentTimeMillis(); // to be removed
+
+            readData(choice);
+            sortData();
+
+            //displayResults("Results for dataset size (" + DATASET_SIZES[choice - 1] + ")");
+
+            long endTime = System.currentTimeMillis();
+            long duration = (endTime - startTime) / 1000; // in seconds
+            System.out.println("Processing time: " + duration + " seconds"); // to be removed
+            //pressEnter(kbdReader);
+        }
+    }
+
+    protected int readChoice(BufferedReader kbdReader) {
+        int choice = 0;
+        boolean isChoiceValid = false;
+        while (!isChoiceValid) {
+            try {
+                choice = Integer.parseInt(kbdReader.readLine());
+                if (choice <= 0 || choice >= 7) {
+                    System.out.println("Invalid input. Choice not found. ");
+                    continue;
+                }
+                isChoiceValid = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter the corresponding number of the choice you pick.");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return choice;
+    }
+
+    protected static void readData(int choice) {
+        System.out.println(GREEN + BOLD + "Initializing file read operation...");
+        int datasetSize = DATASET_SIZES[choice - 1];
+
+        // Initialize medical records arrays
+        medicalRecordsAO = new MedicalRecords[datasetSize];
+        medicalRecordsDO = new MedicalRecords[datasetSize];
+        medicalRecordsRO = new MedicalRecords[datasetSize];
+
+        // Create threads for parallel sorting
+        System.out.println(GREEN + BOLD + "Reading data from the file...");
+        Thread readAscendingDataThread1 = new Thread(() -> readMedicalRecordsFromCSV(ASCENDING_ORDER_CSV, medicalRecordsAO));
+        Thread readAscendingDataThread2 = new Thread(() -> readMedicalRecordsFromCSV(DESCENDING_ORDER_CSV, medicalRecordsDO));
+        Thread readAscendingDataThread3 = new Thread(() -> readMedicalRecordsFromCSV(RANDOM_ORDER_CSV, medicalRecordsRO));
+
+        // Read data files at the same time in different threads
+        readAscendingDataThread1.start();
+        readAscendingDataThread2.start();
+        readAscendingDataThread3.start();
+
+        try {
+            readAscendingDataThread1.join();
+            readAscendingDataThread2.join();
+            readAscendingDataThread3.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
     /**
      * Reads from the dataset and populates a fixed array
      * @author Hyowon
+     *
      * */
-    public static int readMedicalRecordsFromCSV(String fileName, MedicalRecords[] medicalRecordsArray) {
+    public static void readMedicalRecordsFromCSV(String fileName, MedicalRecords[] medicalRecordsArray) {
         int count = 0;
 
-        try (Scanner scanner = new Scanner(new File(fileName))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String firstLine = reader.readLine();
 
-            // Check if file exists. If file does not exist, remind user to pull from Git LFS
-            if (scanner.hasNextLine()) {
-                String firstLine = scanner.nextLine();
-
+            if (firstLine != null) {
                 if (firstLine.toLowerCase().contains("version")) { // Detects file is not pulled from Git LFS
                     System.out.println("File does not exist.\nFile needs to be pulled from Git LFS.");
-                    return -1;
+                    return;
                 }
             } else {
                 System.out.println("The file is empty.");
+                return;
             }
 
-            while (scanner.hasNextLine() && count < medicalRecordsArray.length) {
-                String line = scanner.nextLine();
+            String line;
+            while ((line = reader.readLine()) != null && count < medicalRecordsArray.length) {
                 String[] fields = line.split(",");
 
                 // Handling the case where medications might have commas (e.g., "Atorvastatin, Metformin")
@@ -65,14 +128,7 @@ public class SortingAlgorithmBenchmark {
                 int contactInfo = Integer.parseInt(fields[4].trim().replace("+639", ""));
 
                 // Combine all fields after contactInfo into medications
-                StringBuilder medicationsBuilder = new StringBuilder();
-                for (int i = 5; i < fields.length - 2; i++) {
-                    medicationsBuilder.append(fields[i].trim());
-                    if (i < fields.length - 3) {
-                        medicationsBuilder.append(", ");
-                    }
-                }
-                String medications = medicationsBuilder.toString();
+                String medications = String.join(", ", Arrays.copyOfRange(fields, 5, fields.length - 2));
                 String reasonForVisit = fields[fields.length - 2].trim();
                 String physician = fields[fields.length - 1].trim();
 
@@ -82,93 +138,57 @@ public class SortingAlgorithmBenchmark {
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + fileName);
-        }
-
-        return count;
-    }
-
-    /**
-     * Sorts the dataset via Selection Sort Method
-     * @author Matulay
-     * Algorithm:
-     * 1. Start with the first element (i) as the current position of the sorted portion.
-     * 2.  Find the smallest element in the unsorted portion (from i+1 to n).
-     * 3. Swap the found minimum element with the element at position i.
-     * 4. Move the boundary of the sorted portion one step forward by increasing i.
-     * 5. Repeat the above steps until the entire array is sorted.
-     */
-    private static void selectionSort(MedicalRecords[] medicalRecordsArray) {
-         int n = medicalRecordsArray.length;
-
-        for (int i = 0; i < n - 1; i++) {
-            int minIndex = i;
-
-            for (int j = i + 1; j < n; j++) {
-                if (medicalRecordsArray[j].compareTo(medicalRecordsArray[minIndex]) < 0) {
-                    minIndex = j;
-                }
-            }
-
-            if (minIndex != i) {
-                MedicalRecords temp = medicalRecordsArray[i];
-                medicalRecordsArray[i] = medicalRecordsArray[minIndex];
-                medicalRecordsArray[minIndex] = temp;
-            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file: " + fileName);
         }
     }
 
-    /**
-     * Sorts the dataset via Insertion method
-     * @author Cardenas
-     * @param dataSize specific size of the data set (i.e., 10,000/50,000/200,000 etc.)
-     * @param medicalRecordsArray Object used to store and manipulate the data set
-     * Algorithm:
-     * 1. Instantiate a new variable for the object to be sorted.
-     * 2. Through a nested loop, make the outer loop such that it iterates from the 2nd element to the last.
-     * 3. Within the inner loop, compare the element from the left to its adjacent right.
-     * 4. If said condition was satisfied, left element is moved to the right.
-     * 5. The variable used in process 1 will then be assigned with the value with its sorted placement.
-     * */
-    private static void insertionSort(MedicalRecords[] medicalRecordsArray, int dataSize) {
-        for (int i = 1; i < dataSize; ++i) {
-            MedicalRecords another = medicalRecordsArray[i];
-            int j = i - 1;
-            while (j >= 0 && medicalRecordsArray[j].compareTo(another) > 0) {
-                medicalRecordsArray[j + 1] = medicalRecordsArray[j];
-                j = j - 1;
-            }
-            medicalRecordsArray[j + 1] = another;
+    protected static void sortData() {
+        System.out.println("Executing sorting algorithms and tracking statement counts...");
+        SortingAlgorithmCounter counter = new SortingAlgorithmCounter();
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+        // Initialize tasks
+        Callable<BigInteger>[] bubbleSortTasks = new Callable[3];
+        Callable<BigInteger>[] insertionSortTasks = new Callable[3];
+        Callable<BigInteger>[] selectionSortTasks = new Callable[3];
+
+        System.out.println("Sorting in progress, please wait...");
+        bubbleSortTasks[0] = () -> counter.getBubbleSortStatementCount(medicalRecordsAO);
+        bubbleSortTasks[1] = () -> counter.getBubbleSortStatementCount(medicalRecordsDO);
+        bubbleSortTasks[2] = () -> counter.getBubbleSortStatementCount(medicalRecordsRO);
+
+        insertionSortTasks[0] = () -> counter.getInsertionSortStatementCount(medicalRecordsAO);
+        insertionSortTasks[1] = () -> counter.getInsertionSortStatementCount(medicalRecordsDO);
+        insertionSortTasks[2] = () -> counter.getInsertionSortStatementCount(medicalRecordsRO);
+
+        selectionSortTasks[0] = () -> counter.getSelectionSortStatementCount(medicalRecordsAO);
+        selectionSortTasks[1] = () -> counter.getSelectionSortStatementCount(medicalRecordsDO);
+        selectionSortTasks[2] = () -> counter.getSelectionSortStatementCount(medicalRecordsRO);
+
+        // Submit tasks and store Future objects
+        Future<BigInteger>[] bubbleSortFutures = new Future[3];
+        Future<BigInteger>[] insertionSortFutures = new Future[3];
+        Future<BigInteger>[] selectionSortFutures = new Future[3];
+
+        for (int i = 0; i < 3; i++) {
+            bubbleSortFutures[i] = executorService.submit(bubbleSortTasks[i]);
+            insertionSortFutures[i] = executorService.submit(insertionSortTasks[i]);
+            selectionSortFutures[i] = executorService.submit(selectionSortTasks[i]);
         }
-    }
-    /**
-     * Sorts the dataset via Bubble Sort method
-     * @author Angelo
-     * @param medicalRecordsArray Object used to store and manipulate the data set
-     * Algorithm:
-     * 1. Iterate through the array multiple times, comparing adjacent elements.
-     * 2. If the left element is greater than the right element, swap them.
-     * 3. Repeat until no swaps are needed, meaning the array is sorted.
-     */
-    private static void  bubbleSort(MedicalRecords[] medicalRecordsArray) {
-        int n = medicalRecordsArray.length;
-        boolean swapped;
 
-        for(int i=0; i < n - 1; i++) {
-            swapped = false;
+        executorService.shutdown();
 
-            for (int j = 0; j < n - i - 1; j++) {
-                if (medicalRecordsArray[j].compareTo(medicalRecordsArray[j + 1]) > 0) {
-                    MedicalRecords temp = medicalRecordsArray[j];
-                    medicalRecordsArray[j] = medicalRecordsArray[j + 1];
-                    medicalRecordsArray[j + 1] = temp;
-
-                    swapped = true;
-                }
+        try {
+            // Wait for all tasks to complete and collect results
+            for (int i = 0; i < 3; i++) {
+                BUBBLE_SORT_RESULTS[i] = bubbleSortFutures[i].get();
+                INSERTION_SORT_RESULTS[i] = insertionSortFutures[i].get();
+                SELECTION_SORT_RESULTS[i] = selectionSortFutures[i].get();
             }
-
-            if (!swapped) {
-                break;
-            }
+            System.out.println("All sorting tasks are completed.");
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
     }
 }
